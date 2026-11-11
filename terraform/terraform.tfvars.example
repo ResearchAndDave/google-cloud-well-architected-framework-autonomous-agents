@@ -1,0 +1,54 @@
+# ==============================================================================
+# Autonomous Google Cloud WAF Auditor - Example Terraform Variables
+# Copy this file to `terraform.tfvars` and customize for your environment:
+#   cp terraform/terraform.tfvars.example terraform/terraform.tfvars
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# PRESET A (DEFAULT RECOMMENDED):
+# Create a dedicated WAF Compliance Host Project inside a specified Folder,
+# and audit the entire Google Cloud Organization.
+# ------------------------------------------------------------------------------
+create_compliance_project = true
+parent_folder_id          = "528686131221"          # Folder where the WAF Compliance Host Project is created
+billing_account_id        = "012345-6789AB-CDEF01"  # Billing Account attached to the new project
+org_id                    = "689811600591"          # Numeric Google Cloud Organization ID
+scope_type                = "ORGANIZATION"          # "ORGANIZATION" | "FOLDER" | "PROJECT"
+scope_id                  = "689811600591"          # Optional override; defaults to org_id when scope_type = "ORGANIZATION"
+region                    = "us-central1"
+enable_realtime_feeds     = true
+enable_gitops             = false
+carbon_export_table       = ""                      # Optional: "billing-prj.carbon_ds.carbon_footprint"
+
+# Optional custom project ID and display name (if compliance_project_id is empty, generates waf-compliance-<hex>):
+# compliance_project_id   = "my-org-waf-compliance"
+# compliance_project_name = "WAF Compliance Hub"
+
+
+# ------------------------------------------------------------------------------
+# PRESET B:
+# Create a dedicated WAF Compliance Host Project inside a Folder,
+# and audit ONLY a specific Folder hierarchy (no Organization-level IAM needed).
+# ------------------------------------------------------------------------------
+# create_compliance_project = true
+# parent_folder_id          = "528686131221"
+# billing_account_id        = "012345-6789AB-CDEF01"
+# scope_type                = "FOLDER"
+# scope_id                  = "528686131221"        # Defaults to parent_folder_id if omitted
+# region                    = "us-central1"
+# enable_realtime_feeds     = true
+# enable_gitops             = false
+
+
+# ------------------------------------------------------------------------------
+# PRESET C:
+# Deploy into an EXISTING GCP Project (do not create a new project),
+# and audit either that single Project, a Folder, or an Organization.
+# ------------------------------------------------------------------------------
+# create_compliance_project = false
+# compliance_project_id     = "existing-compliance-host-project"
+# scope_type                = "PROJECT"             # Or "FOLDER" / "ORGANIZATION"
+# scope_id                  = "existing-compliance-host-project"
+# region                    = "us-central1"
+# enable_realtime_feeds     = true
+# enable_gitops             = false

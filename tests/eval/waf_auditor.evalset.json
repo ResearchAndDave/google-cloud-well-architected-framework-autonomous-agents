@@ -1,0 +1,31 @@
+[
+  {
+    "name": "realtime_drift_open_ssh_firewall",
+    "data": [
+      {
+        "query": "Evaluate real-time Cloud Asset Inventory drift event for `//compute.googleapis.com/projects/golden-path-demo/global/firewalls/allow-ssh-world` (type `compute.googleapis.com/Firewall`) against the Google Cloud Well-Architected Framework.",
+        "expected_tool_use": [
+          {
+            "tool_name": "validate_terraform_and_uri",
+            "tool_input": {
+              "resource_uri": "//compute.googleapis.com/projects/golden-path-demo/global/firewalls/allow-ssh-world"
+            }
+          },
+          {
+            "tool_name": "approve_org_report",
+            "tool_input": {}
+          }
+        ],
+        "reference": "CRITICAL finding under SECURITY pillar citing 'Implement zero trust' for ingress 0.0.0.0/0 on port 22, remediated with IAP range 35.235.240.0/20 and log_config enabled."
+      }
+    ],
+    "initial_session_state": {
+      "org_id": "organizations/123456789",
+      "scan_mode": "REALTIME_DRIFT",
+      "target_asset": "{\"name\":\"//compute.googleapis.com/projects/golden-path-demo/global/firewalls/allow-ssh-world\",\"assetType\":\"compute.googleapis.com/Firewall\",\"resource\":{\"data\":{\"name\":\"allow-ssh-world\",\"direction\":\"INGRESS\",\"sourceRanges\":[\"0.0.0.0/0\"],\"allowed\":[{\"IPProtocol\":\"tcp\",\"ports\":[\"22\"]}],\"logConfig\":{\"enable\":false}}}}",
+      "observed_resource_uris": [
+        "//compute.googleapis.com/projects/golden-path-demo/global/firewalls/allow-ssh-world"
+      ]
+    }
+  }
+]
