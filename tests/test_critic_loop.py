@@ -13,14 +13,14 @@ from types import SimpleNamespace
 from app.agent import approve_org_report
 from app.gcp_tools import validate_terraform_and_uri
 
-VALID_URI = "//compute.googleapis.com/projects/golden-path-demo/global/firewalls/allow-ssh-world"
+VALID_URI = "//compute.googleapis.com/projects/waf-compliance-hub/global/firewalls/allow-ssh-world"
 
 BROKEN_HCL = 'resource "google_compute_firewall" "allow_ssh_iap" { name = "unclosed"'
 
 FIXED_HCL = """
 resource "google_compute_firewall" "allow_ssh_iap" {
   name          = "allow-ssh-world"
-  project       = "golden-path-demo"
+  project       = "waf-compliance-hub"
   network       = "prod-vpc"
   direction     = "INGRESS"
   source_ranges = ["35.235.240.0/20"]
@@ -53,7 +53,7 @@ class SimulatedSynthesizerAgent(BaseAgent):
             "validated_findings": [
                 {
                     "resource_uri": VALID_URI,
-                    "project_id": "golden-path-demo",
+                    "project_id": "waf-compliance-hub",
                     "waf_pillar": "SECURITY",
                     "waf_principle": "Implement zero trust",
                     "severity": "CRITICAL",

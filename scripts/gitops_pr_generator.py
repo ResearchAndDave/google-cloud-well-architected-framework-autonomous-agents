@@ -142,8 +142,8 @@ def main() -> int:
 
     if args.demo:
         sample_finding = {
-            "resource_uri": "//compute.googleapis.com/projects/golden-path-demo/global/firewalls/allow-ssh-world",
-            "project_id": "golden-path-demo",
+            "resource_uri": "//compute.googleapis.com/projects/waf-compliance-hub/global/firewalls/allow-ssh-world",
+            "project_id": "waf-compliance-hub",
             "folder_id": "folders/11223344",
             "waf_pillar": "SECURITY",
             "waf_principle": "Implement zero trust",
@@ -152,7 +152,7 @@ def main() -> int:
             "rationale": "Firewall rule allow-ssh-world permits unrestricted ingress (0.0.0.0/0) on TCP port 22 with firewall logging disabled.",
             "terraform_remediation": """resource "google_compute_firewall" "allow_ssh_iap" {
   name          = "allow-ssh-world"
-  project       = "golden-path-demo"
+  project       = "waf-compliance-hub"
   network       = "prod-vpc"
   direction     = "INGRESS"
   source_ranges = ["35.235.240.0/20"]

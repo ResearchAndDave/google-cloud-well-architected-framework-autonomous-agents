@@ -22,7 +22,7 @@ def _make_pubsub_envelope(payload: dict) -> dict:
             "messageId": "1001",
             "publishTime": "2026-10-22T14:00:00Z",
         },
-        "subscription": "projects/golden-path-demo/subscriptions/waf-auditor-push-sub",
+        "subscription": "projects/waf-compliance-hub/subscriptions/waf-auditor-push-sub",
     }
 
 
@@ -53,7 +53,7 @@ async def test_pubsub_push_path_a_realtime_drift_firewall():
         "validated_findings": [
             {
                 "resource_uri": expected_uri,
-                "project_id": "golden-path-demo",
+                "project_id": "waf-compliance-hub",
                 "folder_id": "folders/11223344",
                 "waf_pillar": "SECURITY",
                 "waf_principle": "Implement zero trust",
@@ -125,9 +125,9 @@ async def test_pubsub_push_path_b_nightly_sweep():
 async def test_tufte_dashboard_endpoint():
     """Verifies GET /dashboard renders Edward Tufte small multiples, sparklines, and drift ledger."""
     sample_telemetry = {
-        "project_id": "pfv-prod-waf-compliance-0",
+        "project_id": "legacy-waf-compliance-0",
         "dataset_id": "org_compliance",
-        "gcs_bucket": "pfv-prod-waf-compliance-0-waf-artifacts",
+        "gcs_bucket": "legacy-waf-compliance-0-waf-artifacts",
         "generated_at": "2026-10-23 16:00:00 UTC",
         "overall_waf_score": 98,
         "total_active_findings": 1,
@@ -147,7 +147,7 @@ async def test_tufte_dashboard_endpoint():
         "current_findings": [
             {
                 "evaluation_timestamp": "2026-10-23T15:29:36+00:00",
-                "org_id": "621928987188",
+                "org_id": "123456789012",
                 "scan_mode": "REALTIME_DRIFT",
                 "resource_uri": "//compute.googleapis.com/projects/agent-dlp/global/firewalls/default-allow-ssh",
                 "project_id": "agent-dlp",

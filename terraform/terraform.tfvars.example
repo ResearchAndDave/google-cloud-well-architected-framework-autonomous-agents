@@ -10,18 +10,18 @@
 # and audit the entire Google Cloud Organization.
 # ------------------------------------------------------------------------------
 create_compliance_project = true
-parent_folder_id          = "528686131221"          # Folder where the WAF Compliance Host Project is created
+parent_folder_id          = "987654321098"          # Folder where the WAF Compliance Host Project is created
 billing_account_id        = "012345-6789AB-CDEF01"  # Billing Account attached to the new project
-org_id                    = "689811600591"          # Numeric Google Cloud Organization ID
+org_id                    = "123456789012"          # Numeric Google Cloud Organization ID
 scope_type                = "ORGANIZATION"          # "ORGANIZATION" | "FOLDER" | "PROJECT"
-scope_id                  = "689811600591"          # Optional override; defaults to org_id when scope_type = "ORGANIZATION"
+scope_id                  = "123456789012"          # Optional override; defaults to org_id when scope_type = "ORGANIZATION"
 region                    = "us-central1"
 enable_realtime_feeds     = true
 enable_gitops             = false
 carbon_export_table       = ""                      # Optional: "billing-prj.carbon_ds.carbon_footprint"
 
 # Optional custom project ID and display name (if compliance_project_id is empty, generates waf-compliance-<hex>):
-# compliance_project_id   = "my-org-waf-compliance"
+# compliance_project_id   = "waf-compliance-hub"
 # compliance_project_name = "WAF Compliance Hub"
 
 
@@ -31,10 +31,10 @@ carbon_export_table       = ""                      # Optional: "billing-prj.car
 # and audit ONLY a specific Folder hierarchy (no Organization-level IAM needed).
 # ------------------------------------------------------------------------------
 # create_compliance_project = true
-# parent_folder_id          = "528686131221"
+# parent_folder_id          = "987654321098"
 # billing_account_id        = "012345-6789AB-CDEF01"
 # scope_type                = "FOLDER"
-# scope_id                  = "528686131221"        # Defaults to parent_folder_id if omitted
+# scope_id                  = "987654321098"        # Defaults to parent_folder_id if omitted
 # region                    = "us-central1"
 # enable_realtime_feeds     = true
 # enable_gitops             = false

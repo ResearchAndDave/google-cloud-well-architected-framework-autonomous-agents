@@ -5,7 +5,7 @@
     },
     "deleted": false,
     "asset": {
-      "name": "//compute.googleapis.com/projects/golden-path-demo/global/firewalls/allow-ssh-world",
+      "name": "//compute.googleapis.com/projects/waf-compliance-hub/global/firewalls/allow-ssh-world",
       "assetType": "compute.googleapis.com/Firewall",
       "ancestors": [
         "projects/987654321",
@@ -18,7 +18,7 @@
         "discoveryName": "Firewall",
         "data": {
           "name": "allow-ssh-world",
-          "network": "https://www.googleapis.com/compute/v1/projects/golden-path-demo/global/networks/prod-vpc",
+          "network": "https://www.googleapis.com/compute/v1/projects/waf-compliance-hub/global/networks/prod-vpc",
           "direction": "INGRESS",
           "priority": 1000,
           "sourceRanges": ["0.0.0.0/0"],
@@ -42,7 +42,7 @@
     },
     "deleted": false,
     "asset": {
-      "name": "//sqladmin.googleapis.com/projects/golden-path-demo/instances/orders-db-prod",
+      "name": "//sqladmin.googleapis.com/projects/waf-compliance-hub/instances/orders-db-prod",
       "assetType": "sqladmin.googleapis.com/Instance",
       "ancestors": [
         "projects/987654321",

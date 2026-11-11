@@ -112,8 +112,8 @@ def test_architecture_html_uses_dynamic_waf_config(monkeypatch):
     html_out = render_tufte_architecture_html()
     assert "globex-waf-compliance" in html_out
     assert "folders/88990011" in html_out
-    assert "pfv-prod-waf-compliance-0" not in html_out
-    assert "621928987188" not in html_out
+    assert "legacy-waf-compliance-0" not in html_out
+    assert "123456789012" not in html_out
 
 
 def test_instruction_provider_uses_configured_scope(monkeypatch):
@@ -122,7 +122,7 @@ def test_instruction_provider_uses_configured_scope(monkeypatch):
     ctx = SimpleNamespace(state={})
     prompt = provider(ctx)
     assert "folders/11223344" in prompt
-    assert "621928987188" not in prompt
+    assert "123456789012" not in prompt
 
 
 def test_deploy_script_syntax_and_help():

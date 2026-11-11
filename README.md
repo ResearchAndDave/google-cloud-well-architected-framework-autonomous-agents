@@ -165,7 +165,7 @@ uv run --extra dev pytest tests/test_pubsub_push.py tests/test_critic_loop.py -v
 ### 2. Replay Synthetic Cloud Asset Inventory Drift Events Locally
 Start the FastAPI Pub/Sub push server in one terminal (and open `http://127.0.0.1:8080/dashboard` or `http://127.0.0.1:8080/architecture` in your browser):
 ```bash
-export GOOGLE_CLOUD_PROJECT="golden-path-demo"
+export GOOGLE_CLOUD_PROJECT="waf-compliance-hub"
 export GOOGLE_CLOUD_LOCATION="us-central1"
 export GOOGLE_GENAI_USE_VERTEXAI="TRUE"
 uv run uvicorn app.main:app --reload --port 8080
@@ -188,7 +188,7 @@ uv run python scripts/replay_drift.py --mode NIGHTLY_SWEEP --org-id organization
 
 ### 3. Launch Interactive ADK Web UI
 ```bash
-gcloud auth application-default login --project=golden-path-demo
+gcloud auth application-default login --project=waf-compliance-hub
 uv run adk web
 ```
 
@@ -203,7 +203,7 @@ uv run adk eval app tests/eval/waf_auditor.evalset.json --config_file_path=tests
 
 | Variable | Default | Description |
 | :--- | :--- | :--- |
-| `GOOGLE_CLOUD_PROJECT` | `golden-path-demo` | Compliance host project ID for Vertex AI, BigQuery, and Cloud Run |
+| `GOOGLE_CLOUD_PROJECT` | `waf-compliance-hub` | Compliance host project ID for Vertex AI, BigQuery, and Cloud Run |
 | `GOOGLE_CLOUD_QUOTA_PROJECT` | `<GOOGLE_CLOUD_PROJECT>` | Explicit quota project ID attached to GCP SDK clients |
 | `GOOGLE_CLOUD_LOCATION` | `us-central1` | Region for Vertex AI Gemini models and Cloud Run |
 | `GOOGLE_GENAI_USE_VERTEXAI` | `TRUE` | Routes ADK `LlmAgent` calls through Vertex AI |

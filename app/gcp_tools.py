@@ -79,7 +79,7 @@ def search_org_assets(
     """Searches resources across the Organization or Project using Cloud Asset Inventory.
 
     Args:
-        scope: Organization or Project scope, e.g. 'organizations/123456789' or 'projects/golden-path-demo'.
+        scope: Organization, Folder, or Project scope, e.g. 'organizations/123456789012', 'folders/987654321098', or 'projects/waf-compliance-hub'.
         asset_types: List of CAI asset types, e.g. ['compute.googleapis.com/Instance', 'sqladmin.googleapis.com/Instance'].
         query: Optional CAI query filter, e.g. 'NOT labels.env:*' or 'location:us-central1'.
         page_size: Max records to return (capped at 50 to protect LLM context window).

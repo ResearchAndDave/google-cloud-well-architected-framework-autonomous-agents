@@ -11,8 +11,8 @@ from app.gitops import (
 )
 
 SAMPLE_CRITICAL_SECURITY_FINDING = {
-    "resource_uri": "//compute.googleapis.com/projects/golden-path-demo/global/firewalls/allow-ssh-world",
-    "project_id": "golden-path-demo",
+    "resource_uri": "//compute.googleapis.com/projects/waf-compliance-hub/global/firewalls/allow-ssh-world",
+    "project_id": "waf-compliance-hub",
     "waf_pillar": "SECURITY",
     "waf_principle": "Implement zero trust",
     "severity": "CRITICAL",
@@ -21,7 +21,7 @@ SAMPLE_CRITICAL_SECURITY_FINDING = {
     "terraform_remediation": """
 resource "google_compute_firewall" "allow_ssh_iap" {
   name          = "allow-ssh-world"
-  project       = "golden-path-demo"
+  project       = "waf-compliance-hub"
   network       = "prod-vpc"
   direction     = "INGRESS"
   source_ranges = ["35.235.240.0/20"]
@@ -36,8 +36,8 @@ resource "google_compute_firewall" "allow_ssh_iap" {
 }
 
 SAMPLE_MEDIUM_COST_FINDING_HIGH_SAVINGS = {
-    "resource_uri": "//compute.googleapis.com/projects/golden-path-demo/zones/us-central1-a/instances/idle-gpu-vm",
-    "project_id": "golden-path-demo",
+    "resource_uri": "//compute.googleapis.com/projects/waf-compliance-hub/zones/us-central1-a/instances/idle-gpu-vm",
+    "project_id": "waf-compliance-hub",
     "waf_pillar": "COST",
     "waf_principle": "Optimize resource usage",
     "severity": "MEDIUM",
@@ -49,7 +49,7 @@ SAMPLE_MEDIUM_COST_FINDING_HIGH_SAVINGS = {
 
 SAMPLE_LOW_OPS_FINDING = {
     "resource_uri": "//storage.googleapis.com/projects/_/buckets/demo-logs-bucket",
-    "project_id": "golden-path-demo",
+    "project_id": "waf-compliance-hub",
     "waf_pillar": "OPS",
     "waf_principle": "Ensure operational readiness",
     "severity": "LOW",
@@ -79,8 +79,8 @@ def test_should_open_gitops_pr_guardrails():
 def test_build_gitops_pr_plan_generates_valid_hcl_file():
     plan = build_gitops_pr_plan(SAMPLE_CRITICAL_SECURITY_FINDING)
     fp = plan["fingerprint"]
-    assert plan["branch_name"] == f"waf-remediation/golden-path-demo/security-{fp}"
-    assert plan["target_tf_path"] == f"remediations/golden-path-demo/security_{fp}.tf"
+    assert plan["branch_name"] == f"waf-remediation/waf-compliance-hub/security-{fp}"
+    assert plan["target_tf_path"] == f"remediations/waf-compliance-hub/security_{fp}.tf"
     assert "Implement zero trust" in plan["pr_body"]
     # Verify the generated .tf file (including header comments) parses cleanly with python-hcl2
     parsed = hcl2.loads(plan["file_content"])

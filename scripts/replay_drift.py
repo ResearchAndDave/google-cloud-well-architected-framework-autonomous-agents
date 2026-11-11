@@ -45,7 +45,7 @@ def build_pubsub_envelope(payload: dict) -> dict:
             "messageId": f"local-replay-{uuid.uuid4().hex[:8]}",
             "publishTime": datetime.now(timezone.utc).isoformat(),
         },
-        "subscription": f"projects/{os.getenv('GOOGLE_CLOUD_PROJECT', 'golden-path-demo')}/subscriptions/waf-auditor-push-sub",
+        "subscription": f"projects/{os.getenv('GOOGLE_CLOUD_PROJECT', 'waf-compliance-hub')}/subscriptions/waf-auditor-push-sub",
     }
 
 

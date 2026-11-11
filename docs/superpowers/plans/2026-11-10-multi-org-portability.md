@@ -23,7 +23,7 @@
 - **Modify:**
   - `app/gcp_tools.py` — Replace hardcoded project/bucket defaults with `get_waf_config()`, make `get_active_scc_findings` support `organizations/*`, `folders/*`, and `projects/*` parents, make `query_carbon_footprint_summary` degrade gracefully with a warning when unconfigured, and merge `observed_locations` in `fetch_project_recommendations`.
   - `app/main.py` — Wire `get_waf_config()` for `PROJECT_ID`, `LOCATION`, and `DEFAULT_ORG_ID`.
-  - `app/dashboard.py` — Replace hardcoded `pfv-prod-waf-compliance-0` and `organizations/621928987188` strings in `fetch_dashboard_telemetry` and `render_tufte_architecture_html` with `get_waf_config()`.
+  - `app/dashboard.py` — Replace hardcoded `legacy-waf-compliance-0` and `organizations/123456789012` strings in `fetch_dashboard_telemetry` and `render_tufte_architecture_html` with `get_waf_config()`.
   - `app/skill_loader.py` — Use `get_waf_config().target_scope` as fallback in `build_pillar_instruction_provider` and clarify multi-scope & optional telemetry fallback rules.
   - `scripts/replay_drift.py` — Use `get_waf_config()` for default `--org-id` and Pub/Sub subscription project slug.
   - `terraform/versions.tf` — Add `hashicorp/random` (`~> 3.6`) provider and remove static `project = var.compliance_project_id` from provider blocks so `google_project.waf_compliance` can be created when `compliance_project_id` is generated.
@@ -106,7 +106,7 @@ NUMERIC_ID_PATTERN = re.compile(r"^\d+$")
 DEFAULT_RECOMMENDER_LOCATIONS = "global,us-central1,us-east1,europe-west1,asia-east1"
 
 
-def normalize_scope(raw_scope: str | None, fallback_project: str = "golden-path-demo") -> str:
+def normalize_scope(raw_scope: str | None, fallback_project: str = "waf-compliance-hub") -> str:
     """Normalizes an audit scope string into canonical CAI parent format.
 
     Supports:
@@ -141,7 +141,7 @@ class WAFConfig:
 
 def get_waf_config() -> WAFConfig:
     """Resolves WAFConfig from environment variables with zero hardcoded org lock-in."""
-    project_id = os.getenv("GOOGLE_CLOUD_PROJECT", "golden-path-demo").strip() or "golden-path-demo"
+    project_id = os.getenv("GOOGLE_CLOUD_PROJECT", "waf-compliance-hub").strip() or "waf-compliance-hub"
     quota_project_id = (os.getenv("GOOGLE_CLOUD_QUOTA_PROJECT") or project_id).strip()
     location = os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1").strip() or "us-central1"
 
@@ -455,7 +455,7 @@ def query_carbon_footprint_summary(
         }
 ```
 
-6. Update `commit_findings_to_bigquery_and_gcs` in `app/gcp_tools.py` to use `get_waf_config()` instead of hardcoded `pfv-prod-waf-compliance-0`:
+6. Update `commit_findings_to_bigquery_and_gcs` in `app/gcp_tools.py` to use `get_waf_config()` instead of hardcoded `legacy-waf-compliance-0`:
 ```python
     cfg = get_waf_config()
     bq_table = cfg.bq_table
@@ -487,7 +487,7 @@ git commit -m "feat(telemetry): support folder/project SCC scopes and graceful c
 - Modify: `scripts/replay_drift.py:39-80`
 - Test: `tests/test_multi_org_portability.py`
 
-- [ ] **Step 1: Add failing test verifying `render_tufte_architecture_html()` and `build_pillar_instruction_provider()` reflect configured project/scope with zero hardcoded `pfv-prod-waf-compliance-0` strings**
+- [ ] **Step 1: Add failing test verifying `render_tufte_architecture_html()` and `build_pillar_instruction_provider()` reflect configured project/scope with zero hardcoded `legacy-waf-compliance-0` strings**
 
 Append to `tests/test_multi_org_portability.py`:
 
@@ -505,8 +505,8 @@ def test_architecture_html_uses_dynamic_waf_config(monkeypatch):
     html_out = render_tufte_architecture_html()
     assert "globex-waf-compliance" in html_out
     assert "folders/88990011" in html_out
-    assert "pfv-prod-waf-compliance-0" not in html_out
-    assert "621928987188" not in html_out
+    assert "legacy-waf-compliance-0" not in html_out
+    assert "123456789012" not in html_out
 
 
 def test_instruction_provider_uses_configured_scope(monkeypatch):
@@ -515,13 +515,13 @@ def test_instruction_provider_uses_configured_scope(monkeypatch):
     ctx = SimpleNamespace(state={})
     prompt = provider(ctx)
     assert "folders/11223344" in prompt
-    assert "621928987188" not in prompt
+    assert "123456789012" not in prompt
 ```
 
 - [ ] **Step 2: Run test to verify it fails**
 
 Run: `uv run --extra dev pytest tests/test_multi_org_portability.py -v`
-Expected: FAIL (`assert "globex-waf-compliance" in html_out` fails because `render_tufte_architecture_html()` has hardcoded `pfv-prod-waf-compliance-0` and `621928987188`)
+Expected: FAIL (`assert "globex-waf-compliance" in html_out` fails because `render_tufte_architecture_html()` has hardcoded `legacy-waf-compliance-0` and `123456789012`)
 
 - [ ] **Step 3: Update `app/main.py`, `app/dashboard.py`, `app/skill_loader.py`, and `scripts/replay_drift.py`**
 
@@ -562,7 +562,7 @@ def fetch_dashboard_telemetry(report_blob_name: str | None = None) -> dict[str, 
     gcs_bucket_name = cfg.gcs_bucket
     selected_blob = report_blob_name or "reports/waf_executive_summary.md"
 ```
-- Update `render_tufte_architecture_html()` in `app/dashboard.py` to resolve `cfg = get_waf_config()` at the start of the function and substitute `cfg.target_scope`, `cfg.project_id`, `cfg.quota_project_id`, `cfg.bq_table`, and `cfg.gcs_bucket` in place of the hardcoded `organizations/621928987188`, `pfv-prod-waf-compliance-0`, and `pfv-dev-comm-jev-feedback-0` strings:
+- Update `render_tufte_architecture_html()` in `app/dashboard.py` to resolve `cfg = get_waf_config()` at the start of the function and substitute `cfg.target_scope`, `cfg.project_id`, `cfg.quota_project_id`, `cfg.bq_table`, and `cfg.gcs_bucket` in place of the hardcoded `organizations/123456789012`, `legacy-waf-compliance-0`, and `legacy-ai-inference-dev-0` strings:
 ```python
 def render_tufte_architecture_html() -> str:
     """Renders an Edward Tufte-inspired Architectural Overview & Multivariate System Schematic."""
@@ -626,7 +626,7 @@ operating under skill `{metadata.get('name', skill_dir_name)}` (v{metadata.get('
     return instruction_provider
 ```
 
-4. In `scripts/replay_drift.py`, use `os.getenv("GOOGLE_CLOUD_PROJECT", "golden-path-demo")` for the synthetic Pub/Sub subscription name and `os.getenv("WAF_TARGET_SCOPE") or os.getenv("WAF_ORG_ID", "organizations/123456789")` for the default `--org-id`.
+4. In `scripts/replay_drift.py`, use `os.getenv("GOOGLE_CLOUD_PROJECT", "waf-compliance-hub")` for the synthetic Pub/Sub subscription name and `os.getenv("WAF_TARGET_SCOPE") or os.getenv("WAF_ORG_ID", "organizations/123456789")` for the default `--org-id`.
 
 - [ ] **Step 4: Run all Python unit and async integration tests**
 
@@ -719,7 +719,7 @@ variable "compliance_project_name" {
 variable "parent_folder_id" {
   type        = string
   default     = ""
-  description = "GCP Folder ID (e.g., '528686131221' or 'folders/528686131221') where the dedicated WAF Compliance Project will be created."
+  description = "GCP Folder ID (e.g., '987654321098' or 'folders/987654321098') where the dedicated WAF Compliance Project will be created."
 }
 
 variable "billing_account_id" {

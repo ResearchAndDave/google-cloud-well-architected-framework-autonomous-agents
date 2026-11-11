@@ -10,7 +10,7 @@ NUMERIC_ID_PATTERN = re.compile(r"^\d+$")
 DEFAULT_RECOMMENDER_LOCATIONS = "global,us-central1,us-east1,europe-west1,asia-east1"
 
 
-def normalize_scope(raw_scope: str | None, fallback_project: str = "golden-path-demo") -> str:
+def normalize_scope(raw_scope: str | None, fallback_project: str = "waf-compliance-hub") -> str:
     """Normalizes an audit scope string into canonical CAI parent format.
 
     Supports:
@@ -45,7 +45,7 @@ class WAFConfig:
 
 def get_waf_config() -> WAFConfig:
     """Resolves WAFConfig from environment variables with zero hardcoded org lock-in."""
-    project_id = os.getenv("GOOGLE_CLOUD_PROJECT", "golden-path-demo").strip() or "golden-path-demo"
+    project_id = os.getenv("GOOGLE_CLOUD_PROJECT", "waf-compliance-hub").strip() or "waf-compliance-hub"
     quota_project_id = (os.getenv("GOOGLE_CLOUD_QUOTA_PROJECT") or project_id).strip()
     location = os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1").strip() or "us-central1"
 

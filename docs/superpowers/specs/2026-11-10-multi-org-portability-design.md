@@ -21,7 +21,7 @@ Make the Autonomous Google Cloud Well-Architected Framework (WAF) Auditor archit
    - Automatically enable required GCP APIs and provision the Artifact Registry repository (`waf-auditor`) in the host project via Terraform.
    - Make Phase 4 GitOps Pull Request automation (`terraform/gitops_cloudbuild.tf`) opt-in via `enable_gitops = false` by default.
 4. **Single Source of Truth Runtime Configuration (`app/config.py`):**
-   - Eliminate conflicting hardcoded defaults (`pfv-prod-waf-compliance-0`, `golden-path-demo`, `organizations/123456789`) across `app/main.py`, `app/gcp_tools.py`, `app/dashboard.py`, and `scripts/replay_drift.py`.
+   - Eliminate conflicting hardcoded defaults (`legacy-waf-compliance-0`, `waf-compliance-hub`, `organizations/123456789`) across `app/main.py`, `app/gcp_tools.py`, `app/dashboard.py`, and `scripts/replay_drift.py`.
 5. **Graceful Telemetry Degradation Across Diverse GCP Environments (`app/gcp_tools.py`):**
    - Support `organizations/*`, `folders/*`, and `projects/*` parents in `get_active_scc_findings`, and degrade gracefully with a structured warning when Security Command Center (SCC v2) or the Cloud Billing Carbon Footprint BigQuery export table is not enabled in the target environment.
    - Dynamically include discovered asset regions when querying Active Assist (`fetch_project_recommendations`) instead of restricting to `us-central1` and `us-east1`.
@@ -73,7 +73,7 @@ Add `hashicorp/random` (`~> 3.6`) alongside `hashicorp/google` and `hashicorp/go
 | `create_compliance_project` | `bool` | `true` | When `true`, creates a new dedicated GCP project for the WAF Auditor. When `false`, uses an existing project specified in `compliance_project_id`. |
 | `compliance_project_id` | `string` | `""` | Custom project ID to create (when `create_compliance_project = true`) or existing project ID to use (when `create_compliance_project = false`). If empty and `create_compliance_project = true`, generates `waf-compliance-<6-char-hex>`. |
 | `compliance_project_name` | `string` | `"WAF Compliance Hub"` | Display name for the created WAF Compliance Host Project. |
-| `parent_folder_id` | `string` | `""` | Folder ID (e.g., `"528686131221"` or `"folders/528686131221"`) under which to create the WAF Compliance Host Project. |
+| `parent_folder_id` | `string` | `""` | Folder ID (e.g., `"987654321098"` or `"folders/987654321098"`) under which to create the WAF Compliance Host Project. |
 | `billing_account_id` | `string` | `""` | Billing Account ID (`012345-6789AB-CDEF01`) required when `create_compliance_project = true`. |
 | `org_id` | `string` | `""` | Optional numeric Organization ID. Used as fallback parent for project creation if `parent_folder_id` is empty, and as fallback `scope_id` if `scope_id` is empty. |
 | `scope_type` | `string` | `"ORGANIZATION"` | Hierarchy level to audit: `"ORGANIZATION"`, `"FOLDER"`, or `"PROJECT"`. |
@@ -173,14 +173,14 @@ Exports:
 
 ### 4.1 Centralized Config Module (`app/config.py`)
 Provides a frozen dataclass `WAFConfig` and helper functions `get_waf_config()` and `normalize_scope(raw_scope, fallback_project)`:
-- **`normalize_scope(raw_scope: str, fallback_project: str = "golden-path-demo") -> str`**:
+- **`normalize_scope(raw_scope: str, fallback_project: str = "waf-compliance-hub") -> str`**:
   - Strips whitespace.
   - If `raw_scope` starts with `organizations/`, `folders/`, or `projects/`, returns it as-is.
   - If `raw_scope` is purely numeric (`^\d+$`), returns `f"organizations/{raw_scope}"` for backward compatibility.
   - If `raw_scope` is empty, returns `f"projects/{fallback_project}"`.
   - Otherwise, returns `f"projects/{raw_scope}"`.
 - **`get_waf_config() -> WAFConfig`**:
-  - `project_id`: `os.getenv("GOOGLE_CLOUD_PROJECT", "golden-path-demo")`
+  - `project_id`: `os.getenv("GOOGLE_CLOUD_PROJECT", "waf-compliance-hub")`
   - `quota_project_id`: `os.getenv("GOOGLE_CLOUD_QUOTA_PROJECT") or project_id`
   - `location`: `os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1")`
   - `target_scope`: `normalize_scope(os.getenv("WAF_TARGET_SCOPE") or os.getenv("WAF_ORG_ID", "organizations/123456789"), project_id)`
@@ -212,11 +212,11 @@ Provides a frozen dataclass `WAFConfig` and helper functions `get_waf_config()` 
      }
      ```
 5. **`commit_findings_to_bigquery_and_gcs`**:
-   - Reads `bq_table` and `gcs_bucket_name` via `get_waf_config()` instead of hardcoding `pfv-prod-waf-compliance-0`.
+   - Reads `bq_table` and `gcs_bucket_name` via `get_waf_config()` instead of hardcoding `legacy-waf-compliance-0`.
 
 ### 4.3 FastAPI Entrypoint, Dashboard & Skill Loader (`app/main.py`, `app/dashboard.py`, `app/skill_loader.py`)
 - **`app/main.py`**: Uses `get_waf_config()` for `PROJECT_ID`, `LOCATION`, `DEFAULT_ORG_ID` (`cfg.target_scope`), and reads `WAF_GCS_BUCKET` directly from `os.getenv("WAF_GCS_BUCKET", "")` for `GcsArtifactService` (preserving `InMemoryArtifactService` fallback when `WAF_GCS_BUCKET` is unset in local unit tests).
-- **`app/dashboard.py`**: Replaces all hardcoded `pfv-prod-waf-compliance-0` references in `fetch_dashboard_telemetry` and `render_tufte_architecture_html` with dynamic values from `get_waf_config()`.
+- **`app/dashboard.py`**: Replaces all hardcoded `legacy-waf-compliance-0` references in `fetch_dashboard_telemetry` and `render_tufte_architecture_html` with dynamic values from `get_waf_config()`.
 - **`app/skill_loader.py`**: Updates `build_pillar_instruction_provider` to label the scope as `Target Audit Scope: {org_id}` (supporting Organization, Folder, or Project scopes) and instructs sub-agents to rely on `search_org_assets` and `inspect_resource_configuration` whenever optional telemetry (SCC v2 or Carbon export) returns a warning.
 
 ---
@@ -248,7 +248,7 @@ Includes documented configuration blocks for:
 
 1. **Unit Tests (`tests/test_multi_org_portability.py`):**
    - Verify `normalize_scope` handles `organizations/123`, bare numeric `123`, `folders/456`, `projects/my-proj`, and empty strings.
-   - Verify `get_waf_config()` derives `bq_table` and `gcs_bucket` from `GOOGLE_CLOUD_PROJECT` with zero hardcoded `pfv-prod-waf-compliance-0` strings.
+   - Verify `get_waf_config()` derives `bq_table` and `gcs_bucket` from `GOOGLE_CLOUD_PROJECT` with zero hardcoded `legacy-waf-compliance-0` strings.
    - Verify `get_active_scc_findings` formats parent resource names for `organizations/*`, `folders/*`, and `projects/*`, and returns a graceful `warning` dict on exceptions.
    - Verify `query_carbon_footprint_summary` returns a graceful `warning` dict when no table is configured or when BigQuery raises `NotFound`.
    - Verify `fetch_project_recommendations` merges `observed_locations` from `tool_context.state` with configured default locations.

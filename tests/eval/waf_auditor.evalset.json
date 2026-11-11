@@ -3,12 +3,12 @@
     "name": "realtime_drift_open_ssh_firewall",
     "data": [
       {
-        "query": "Evaluate real-time Cloud Asset Inventory drift event for `//compute.googleapis.com/projects/golden-path-demo/global/firewalls/allow-ssh-world` (type `compute.googleapis.com/Firewall`) against the Google Cloud Well-Architected Framework.",
+        "query": "Evaluate real-time Cloud Asset Inventory drift event for `//compute.googleapis.com/projects/waf-compliance-hub/global/firewalls/allow-ssh-world` (type `compute.googleapis.com/Firewall`) against the Google Cloud Well-Architected Framework.",
         "expected_tool_use": [
           {
             "tool_name": "validate_terraform_and_uri",
             "tool_input": {
-              "resource_uri": "//compute.googleapis.com/projects/golden-path-demo/global/firewalls/allow-ssh-world"
+              "resource_uri": "//compute.googleapis.com/projects/waf-compliance-hub/global/firewalls/allow-ssh-world"
             }
           },
           {
@@ -22,9 +22,9 @@
     "initial_session_state": {
       "org_id": "organizations/123456789",
       "scan_mode": "REALTIME_DRIFT",
-      "target_asset": "{\"name\":\"//compute.googleapis.com/projects/golden-path-demo/global/firewalls/allow-ssh-world\",\"assetType\":\"compute.googleapis.com/Firewall\",\"resource\":{\"data\":{\"name\":\"allow-ssh-world\",\"direction\":\"INGRESS\",\"sourceRanges\":[\"0.0.0.0/0\"],\"allowed\":[{\"IPProtocol\":\"tcp\",\"ports\":[\"22\"]}],\"logConfig\":{\"enable\":false}}}}",
+      "target_asset": "{\"name\":\"//compute.googleapis.com/projects/waf-compliance-hub/global/firewalls/allow-ssh-world\",\"assetType\":\"compute.googleapis.com/Firewall\",\"resource\":{\"data\":{\"name\":\"allow-ssh-world\",\"direction\":\"INGRESS\",\"sourceRanges\":[\"0.0.0.0/0\"],\"allowed\":[{\"IPProtocol\":\"tcp\",\"ports\":[\"22\"]}],\"logConfig\":{\"enable\":false}}}}",
       "observed_resource_uris": [
-        "//compute.googleapis.com/projects/golden-path-demo/global/firewalls/allow-ssh-world"
+        "//compute.googleapis.com/projects/waf-compliance-hub/global/firewalls/allow-ssh-world"
       ]
     }
   }

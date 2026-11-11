@@ -4,7 +4,7 @@
 - **Core Framework:** Google Agent Development Kit (ADK) — Python SDK (`google-adk`)
 - **Knowledge Base:** Official Google Agent Skills (`google/skills` — `google-cloud-waf-*` + 165+ specialized GCP product skills)
 - **Target Scope:** Google Cloud Organization Node (`organizations/{ORG_ID}`)
-- **Compliance Host Project:** `golden-path-demo`
+- **Compliance Host Project:** `waf-compliance-hub`
 
 ---
 
@@ -529,8 +529,8 @@ def commit_findings_to_bigquery_and_gcs(callback_context: CallbackContext) -> No
     if not report:
         return
 
-    bq_table = os.getenv("WAF_BQ_TABLE", "golden-path-demo.org_compliance.waf_findings")
-    gcs_bucket_name = os.getenv("WAF_GCS_BUCKET", "golden-path-demo-waf-artifacts")
+    bq_table = os.getenv("WAF_BQ_TABLE", "waf-compliance-hub.org_compliance.waf_findings")
+    gcs_bucket_name = os.getenv("WAF_GCS_BUCKET", "waf-compliance-hub-waf-artifacts")
     now_iso = datetime.now(timezone.utc).isoformat()
 
     findings = report.get("validated_findings", [])
@@ -872,7 +872,7 @@ variable "org_id" {
 
 variable "compliance_project_id" {
   type        = string
-  default     = "golden-path-demo"
+  default     = "waf-compliance-hub"
   description = "Compliance Host Project ID"
 }
 
@@ -1292,7 +1292,7 @@ active_penalties AS (
       END
     ) AS penalty_points,
     ROUND(SUM(COALESCE(estimated_monthly_savings_usd, 0.0)), 2) AS potential_monthly_savings_usd
-  FROM `golden-path-demo.org_compliance.v_current_waf_posture`
+  FROM `waf-compliance-hub.org_compliance.v_current_waf_posture`
   WHERE compliance_status = 'NON_COMPLIANT'
   GROUP BY waf_pillar
 )
@@ -1320,7 +1320,7 @@ WITH daily_snapshots AS (
     resource_uri,
     waf_principle,
     compliance_status
-  FROM `golden-path-demo.org_compliance.waf_findings`
+  FROM `waf-compliance-hub.org_compliance.waf_findings`
   WHERE evaluation_timestamp >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 14 DAY)
   QUALIFY ROW_NUMBER() OVER (
     PARTITION BY DATE(evaluation_timestamp), resource_uri, waf_pillar, waf_principle
@@ -1365,7 +1365,7 @@ SELECT
   COUNTIF(severity = 'HIGH') AS high_findings,
   ROUND(SUM(COALESCE(estimated_monthly_savings_usd, 0.0)), 2) AS monthly_savings_opportunity_usd,
   MAX(evaluation_timestamp) AS last_evaluated_at
-FROM `golden-path-demo.org_compliance.v_current_waf_posture`
+FROM `waf-compliance-hub.org_compliance.v_current_waf_posture`
 GROUP BY 1, 2, 3;
 ```
 ````
@@ -1385,7 +1385,7 @@ In addition to Looker Studio, the FastAPI service exposes a built-in analytical 
 - **High Data-Ink Ratio & Booktabs Typography:** Warm ivory surface (`#fffff8`), deep charcoal ink (`#111111`), classical serif body typography (`ETBembo`/`Palatino`) paired with `tabular-nums` monospace numerals, and horizontal booktabs rules with zero vertical gridlines or circular gauge chartjunk.
 - **Six-Pillar Small Multiples & Word-Sized SVG Sparklines:** Combines `v_pillar_posture_scores` (`104×12px` horizontal bullet micro-bars showing posture score and deficit) with `v_pillar_drift_velocity` (`80×20px` inline SVG 14-day drift sparklines).
 - **Zero-Suppressed Risk Concentration Matrix (`v_folder_project_heatmap`):** Renders zero-finding cells as quiet middle dots (`·`) so nonzero project/pillar risk concentrations stand out immediately.
-- **Deduplicated Architectural Drift Ledger (`v_current_waf_posture`) & GCS Archive Switcher:** Displays each active finding alongside its Phase 4 GitOps sidenote (`fingerprint`, `branch_name`, `target_tf_path`), collapsible Terraform HCL remediation, and a live selector for timestamped Markdown reports stored in `gs://pfv-prod-waf-compliance-0-waf-artifacts/reports/`.
+- **Deduplicated Architectural Drift Ledger (`v_current_waf_posture`) & GCS Archive Switcher:** Displays each active finding alongside its Phase 4 GitOps sidenote (`fingerprint`, `branch_name`, `target_tf_path`), collapsible Terraform HCL remediation, and a live selector for timestamped Markdown reports stored in `gs://legacy-waf-compliance-0-waf-artifacts/reports/`.
 
 ---
 
@@ -1410,7 +1410,7 @@ In addition to Looker Studio, the FastAPI service exposes a built-in analytical 
     "window": { "startTime": "2026-10-22T14:00:00Z" },
     "deleted": false,
     "asset": {
-      "name": "//compute.googleapis.com/projects/golden-path-demo/global/firewalls/allow-ssh-world",
+      "name": "//compute.googleapis.com/projects/waf-compliance-hub/global/firewalls/allow-ssh-world",
       "assetType": "compute.googleapis.com/Firewall",
       "ancestors": ["projects/987654321", "folders/11223344", "organizations/123456789"],
       "resource": {
@@ -1418,7 +1418,7 @@ In addition to Looker Studio, the FastAPI service exposes a built-in analytical 
         "discoveryName": "Firewall",
         "data": {
           "name": "allow-ssh-world",
-          "network": "https://www.googleapis.com/compute/v1/projects/golden-path-demo/global/networks/prod-vpc",
+          "network": "https://www.googleapis.com/compute/v1/projects/waf-compliance-hub/global/networks/prod-vpc",
           "direction": "INGRESS",
           "priority": 1000,
           "sourceRanges": ["0.0.0.0/0"],
@@ -1433,7 +1433,7 @@ In addition to Looker Studio, the FastAPI service exposes a built-in analytical 
     "window": { "startTime": "2026-10-22T14:05:00Z" },
     "deleted": false,
     "asset": {
-      "name": "//sqladmin.googleapis.com/projects/golden-path-demo/instances/orders-db-prod",
+      "name": "//sqladmin.googleapis.com/projects/waf-compliance-hub/instances/orders-db-prod",
       "assetType": "sqladmin.googleapis.com/Instance",
       "ancestors": ["projects/987654321", "folders/11223344", "organizations/123456789"],
       "resource": {
@@ -1471,12 +1471,12 @@ class DummyToolContext:
         self.actions = SimpleNamespace(escalate=False)
 
 
-VALID_URI = "//compute.googleapis.com/projects/golden-path-demo/global/firewalls/allow-ssh-world"
+VALID_URI = "//compute.googleapis.com/projects/waf-compliance-hub/global/firewalls/allow-ssh-world"
 
 VALID_HCL = """
 resource "google_compute_firewall" "allow_ssh_iap" {
   name          = "allow-ssh-world"
-  project       = "golden-path-demo"
+  project       = "waf-compliance-hub"
   network       = "prod-vpc"
   direction     = "INGRESS"
   source_ranges = ["35.235.240.0/20"]
@@ -1502,7 +1502,7 @@ def test_valid_finding_passes_critic():
 
 def test_hallucinated_uri_rejected():
     ctx = DummyToolContext(observed_uris=[VALID_URI])
-    hallucinated = "//compute.googleapis.com/projects/golden-path-demo/global/firewalls/non-existent-fw"
+    hallucinated = "//compute.googleapis.com/projects/waf-compliance-hub/global/firewalls/non-existent-fw"
     result = validate_terraform_and_uri(hallucinated, VALID_HCL, ctx)
     assert result["is_valid"] is False
     assert any("Hallucinated URI" in err for err in result["errors"])
@@ -1655,7 +1655,7 @@ resource "google_cloudbuild_trigger" "waf_gitops_pr_worker" {
 
 - [x] **Phase 1: Foundation & Read-Only Telemetry (Days 1–3)**
   - Scaffold `terraform/iam.tf`, `terraform/bigquery.tf`, and `terraform/versions.tf` (`terraform validate` passing).
-  - Provision dedicated Compliance Hub project `pfv-prod-waf-compliance-0` under `folders/528686131221` (`organizations/621928987188`), BigQuery dataset `org_compliance`, partitioned/clustered `waf_findings` table, all 4 Looker Studio views (`v_current_waf_posture`, `v_pillar_posture_scores`, `v_pillar_drift_velocity`, `v_folder_project_heatmap`), and versioned GCS bucket `gs://pfv-prod-waf-compliance-0-waf-artifacts`.
+  - Provision dedicated Compliance Hub project `legacy-waf-compliance-0` under `folders/987654321098` (`organizations/123456789012`), BigQuery dataset `org_compliance`, partitioned/clustered `waf_findings` table, all 4 Looker Studio views (`v_current_waf_posture`, `v_pillar_posture_scores`, `v_pillar_drift_velocity`, `v_folder_project_heatmap`), and versioned GCS bucket `gs://legacy-waf-compliance-0-waf-artifacts`.
   - Implement `WAFSkillLoader` against the vendored `./agent/skills/google-cloud-waf-*` directories (6/6 pillar skills verified).
 - [x] **Phase 2: Multi-Agent Pipeline & Critic Loop (Days 4–7)**
   - Implement `app/schemas.py`, `app/gcp_tools.py`, and `app/agent.py` (with Vertex AI `429` exponential backoff via `_resilient_gemini`).

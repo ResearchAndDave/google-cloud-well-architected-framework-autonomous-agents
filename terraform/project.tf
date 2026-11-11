@@ -19,7 +19,7 @@ variable "compliance_project_name" {
 variable "parent_folder_id" {
   type        = string
   default     = ""
-  description = "GCP Folder ID (e.g., '528686131221' or 'folders/528686131221') where the dedicated WAF Compliance Project will be created."
+  description = "GCP Folder ID (e.g., '987654321098' or 'folders/987654321098') where the dedicated WAF Compliance Project will be created."
 }
 
 variable "billing_account_id" {

@@ -12,12 +12,12 @@ class DummyToolContext:
         self.actions = SimpleNamespace(escalate=False)
 
 
-VALID_URI = "//compute.googleapis.com/projects/golden-path-demo/global/firewalls/allow-ssh-world"
+VALID_URI = "//compute.googleapis.com/projects/waf-compliance-hub/global/firewalls/allow-ssh-world"
 
 VALID_HCL = """
 resource "google_compute_firewall" "allow_ssh_iap" {
   name          = "allow-ssh-world"
-  project       = "golden-path-demo"
+  project       = "waf-compliance-hub"
   network       = "prod-vpc"
   direction     = "INGRESS"
   source_ranges = ["35.235.240.0/20"]
@@ -43,7 +43,7 @@ def test_valid_finding_passes_critic():
 
 def test_hallucinated_uri_rejected():
     ctx = DummyToolContext(observed_uris=[VALID_URI])
-    hallucinated = "//compute.googleapis.com/projects/golden-path-demo/global/firewalls/non-existent-fw"
+    hallucinated = "//compute.googleapis.com/projects/waf-compliance-hub/global/firewalls/non-existent-fw"
     result = validate_terraform_and_uri(hallucinated, VALID_HCL, ctx)
     assert result["is_valid"] is False
     assert any("Hallucinated URI" in err for err in result["errors"])
