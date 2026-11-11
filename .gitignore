@@ -16,6 +16,7 @@ agent/skills/.grounding_cache/
 .agents/
 .claude/
 skills-lock.json
+docs/superpowers/
 
 # Terraform
 terraform/.terraform/
