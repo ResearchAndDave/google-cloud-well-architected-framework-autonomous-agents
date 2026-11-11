@@ -1,0 +1,80 @@
+{
+  "open_ssh_firewall": {
+    "window": {
+      "startTime": "2026-10-22T14:00:00Z"
+    },
+    "deleted": false,
+    "asset": {
+      "name": "//compute.googleapis.com/projects/golden-path-demo/global/firewalls/allow-ssh-world",
+      "assetType": "compute.googleapis.com/Firewall",
+      "ancestors": [
+        "projects/987654321",
+        "folders/11223344",
+        "organizations/123456789"
+      ],
+      "resource": {
+        "version": "v1",
+        "discoveryDocumentUri": "https://www.googleapis.com/discovery/v1/apis/compute/v1/rest",
+        "discoveryName": "Firewall",
+        "data": {
+          "name": "allow-ssh-world",
+          "network": "https://www.googleapis.com/compute/v1/projects/golden-path-demo/global/networks/prod-vpc",
+          "direction": "INGRESS",
+          "priority": 1000,
+          "sourceRanges": ["0.0.0.0/0"],
+          "allowed": [
+            {
+              "IPProtocol": "tcp",
+              "ports": ["22"]
+            }
+          ],
+          "logConfig": {
+            "enable": false
+          }
+        }
+      }
+    },
+    "priorAssetState": "DOES_NOT_EXIST"
+  },
+  "zonal_unbacked_cloudsql": {
+    "window": {
+      "startTime": "2026-10-22T14:05:00Z"
+    },
+    "deleted": false,
+    "asset": {
+      "name": "//sqladmin.googleapis.com/projects/golden-path-demo/instances/orders-db-prod",
+      "assetType": "sqladmin.googleapis.com/Instance",
+      "ancestors": [
+        "projects/987654321",
+        "folders/11223344",
+        "organizations/123456789"
+      ],
+      "resource": {
+        "version": "v1beta4",
+        "discoveryName": "DatabaseInstance",
+        "data": {
+          "name": "orders-db-prod",
+          "databaseVersion": "POSTGRES_15",
+          "region": "us-central1",
+          "settings": {
+            "tier": "db-custom-8-32768",
+            "availabilityType": "ZONAL",
+            "userLabels": {
+              "env": "prod",
+              "tier": "mission-critical"
+            },
+            "ipConfiguration": {
+              "ipv4Enabled": true,
+              "requireSsl": false
+            },
+            "backupConfiguration": {
+              "enabled": false,
+              "pointInTimeRecoveryEnabled": false
+            }
+          }
+        }
+      }
+    },
+    "priorAssetState": "PRESENT"
+  }
+}

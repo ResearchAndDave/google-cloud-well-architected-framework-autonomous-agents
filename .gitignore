@@ -1,0 +1,38 @@
+# Python & Virtual Environments
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.ruff_cache/
+.coverage
+
+# Grounding document local cache
+agent/skills/.grounding_cache/
+.agents/skills/.grounding_cache/
+
+# Terraform
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.*
+terraform/crash.log
+terraform/*.tfvars
+terraform/override.tf
+terraform/override.tf.json
+
+# IDE & OS & ADK Local Session Storage
+.DS_Store
+.idea/
+.vscode/
+*.swp
+.env
+app/.env
+.adk/
+app/.adk/
+
+# Runtime dashboard snapshot (real org findings; regenerated on each live fetch)
+app/.dashboard_cache.json
